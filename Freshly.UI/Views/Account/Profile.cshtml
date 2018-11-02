@@ -1,0 +1,86 @@
+﻿@model ApplicationUser
+
+@{
+    ViewData["Title"] = $"{Model.FirstName} {Model.LastName}'s Profile";
+}
+<div class="board profile">
+    <div class="container">
+        <div class="header">
+            <img src="~/account/avatar/@Model.UserId" alt="@Model.FirstName" />
+            
+            <div class="profile-tabs">
+                <a href="~/@("@" + Model.UserId)" is-parent="false" class="getr">Personal Data</a>
+                <a href="~/@("@" + Model.UserId)/edit" is-parent="false" class="getr">Edit Profile</a>
+                <a href="~/@("@" + Model.UserId)/groups" is-parent="false" class="getr">User Groups</a>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="board">
+    <div class="container">
+        <div class="profile-tools">
+            <h4>@($"{Model.FirstName} {Model.LastName}")</h4>
+            <a href="~/@("@" + Model.UserId)" is-parent="true"><i class="fa fa-user"></i> Account Profile</a>
+            <a href="~/business" is-parent="true"><i class="fa fa-building"></i> Business Dealings</a>
+            <a href="~/care/@("@" + Model.UserId)" is-parent="true"><i class="fa fa-user"></i> Care History</a>
+            <h4>Groups</h4>
+            <div id="userroles">
+                <ul class="list-unstyled">
+                    @{
+                        var ug = Model.Groups.Split(',');
+                    }
+                    @foreach (string g in ug) {
+                    <li>@g</li>
+                    }
+                </ul>
+            </div>
+        </div>
+        <div class="profile-data">
+            @*<div class="profile-tabs">
+                <a href="~/@("@" + Model.UserId)" is-parent="false" class="getr">Personal Data</a>
+                <a href="~/@("@" + Model.UserId)/edit" is-parent="false" class="getr">Edit Profile</a>
+                <a href="~/@("@" + Model.UserId)/groups" is-parent="false" class="getr">User Groups</a>
+            </div>*@
+            <div id="accountdetails">
+                @if (ViewBag.Tab == null) {
+                    <div class="panel panel-default">
+                        <div class="panel-body">
+                            <h3>User's basic bio-data</h3>
+                            <hr />
+                            <dl class="dl-horizontal">
+                                <dt>First Name:</dt>
+                                <dd>@Model.FirstName</dd>
+                                <dt>Last Name:</dt>
+                                <dd>@Model.LastName</dd>
+                                <dt>Gender:</dt>
+                                <dd>@Model.Gender</dd>
+                                @if (Model.DateOfBirth != null) {
+                                    <dt>Date Of Birth:</dt>
+                                    <dd>@Model.DateOfBirth?.ToString("MMM, dd yyyy")</dd>
+                                }
+                                <dt>Email Address:</dt>
+                                <dd>@Model.Email</dd>
+                                <dt>Phone Number:</dt>
+                                <dd>@Model.PhoneNumber</dd>
+                            </dl>
+                            <div class="btn-group">
+                                <a href="~/account/edit/@Model.UserId" class="btn btn-default getr">
+                                    <i class="fa fa-edit"></i> Edit
+                                </a>
+                                <a href="~/account/delete/@Model.UserId" class="btn btn-danger getr">
+                                    <i class="fa fa-trash"></i> Delete
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                } else {
+                    <vc:profile-tabs user-id="@Model.UserId" tab="@ViewBag.Tab">
+
+                    </vc:profile-tabs>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+

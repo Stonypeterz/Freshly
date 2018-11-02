@@ -1,0 +1,73 @@
+﻿@model SignUpModel  
+@{
+    ViewData["Title"] = "Create your own account";
+}
+<div class="board cover">
+    <div class="container">
+        <div class="minibox extended">
+            <img id="Avatar" src="~/images/MaleAvatar.png" class="img-circle img-responsive" alt="Avatar" />
+            <form id="frmSignUp" asp-controller="Account" asp-action="SignUp" class="form-horizontal" method="post">
+                @((ViewBag.Msg == null) ? "" : Html.Raw(ViewBag.Msg))
+                <div class="form-group">
+                    <label for="UserId" class="col-md-3 control-label">User Id:</label>
+                    <div class="col-md-9">
+                        <input type="text" id="UserId" name="UserId" class="form-control" maxlength="128" required value="@Model.UserId" title="User Id" />
+                        <span asp-validation-for="UserId" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="FirstName" class="col-md-3 control-label">First Name:</label>
+                    <div class="col-md-9">
+                        <input type="text" id="FirstName" name="FirstName" class="form-control" maxlength="256" required title="First Name" value="@Model.FirstName" />
+                        <span asp-validation-for="FirstName" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="LastName" class="col-md-3 control-label">Last Name:</label>
+                    <div class="col-md-9">
+                        <input type="text" id="LastName" name="LastName" class="form-control" maxlength="256" required title="Last Name" value="@Model.LastName" />
+                        <span asp-validation-for="LastName" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="DateOfBirth" class="col-md-3 control-label">Date Of Birth:</label>
+                    <div class="col-md-9">
+                        <input type="text" id="DateOfBirth" name="DateOfBirth" class="form-control date" value="@Model.DateOfBirth" title="Date Of Birth" />
+                        <span asp-validation-for="DateOfBirth" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="Gender" class="col-md-3 control-label">Gender:</label>
+                    <div class="col-md-9">
+                        <select asp-for="@Model.Gender" id="Gender" name="Gender" class="form-control" required title="Gender">
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                        </select>
+                        <span asp-validation-for="Gender" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="Email" class="col-md-3 control-label">Email:</label>
+                    <div class="col-md-9">
+                        <input type="text" id="Email" name="Email" value="@Model.Email" class="form-control" maxlength="256" required title="Email" />
+                        <span asp-validation-for="Email" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="PhoneNumber" class="col-md-3 control-label">Phone Number:</label>
+                    <div class="col-md-9">
+                        <input type="text" id="PhoneNumber" name="PhoneNumber" class="form-control" maxlength="128" value="@Model.PhoneNumber" title="Phone Number" />
+                        <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="col-md-9 col-md-offset-3">
+                        <button type="Submit" id="btnSignUp" name="btn" class="btn btn-primary postr">Sign Up</button>
+                    </div>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>

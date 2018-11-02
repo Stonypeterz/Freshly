@@ -1,0 +1,38 @@
+﻿@model ApplicationUser
+
+@{
+    ViewData["Title"] = $"{Model.FirstName} {Model.LastName}'s Profile";
+}
+<div class="board profile">
+    <div class="container">
+        <div class="header">
+            <img src="~/account/avatar/@Model.UserId" alt="@Model.FirstName" />
+            <h3>@($"{Model.FirstName} {Model.LastName}")</h3>
+        </div>
+    </div>
+</div>
+<div class="board">
+    <div class="container">
+        <div class="profile-tools">
+        </div>
+        <div class="profile-data">
+            <div class="profile-tabs">
+                <a href="~/@("@" + Model.UserId)" class="active getr"><i class="fa fa-user"></i> User Profile</a>
+            </div>
+            <div id="accountdetails" class="panel panel-default">
+                <div class="panel-body">
+                    <dl class="dl-horizontal">
+                        <dt>First Name:</dt>
+                        <dd>@Model.FirstName</dd>
+                        <dt>Last Name:</dt>
+                        <dd>@Model.LastName</dd>
+                        <dt>Gender:</dt>
+                        <dd>@Model.Gender</dd>
+                    </dl>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+

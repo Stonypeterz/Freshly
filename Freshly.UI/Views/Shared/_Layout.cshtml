@@ -1,0 +1,42 @@
+﻿<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="~/favicon.ico">
+    <title>@ViewData["Title"] - Stonypeterz&trade;</title>
+    <link href="~/lib/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="~/lib/fontawesome/css/fontawesome.min.css" rel="stylesheet" />
+    <link href="~/css/shellstyle.min.css" rel="stylesheet" asp-append-version="true" />
+</head>
+<body>
+    <div id="coverpage"><span class="fa fa-cog fa-5x fa-spin"></span><h4>Please wait, we are working on it.</h4></div>
+    <div class="feedback">
+        <a href="~/im/chat">Chat with us (customer care)<span class="pull-right"><i class="fa fa-commenting"></i></span></a>
+    </div>
+    @Html.Partial("_header")
+    <div id="page-container" class="board cover">
+        <div class="container">
+            @RenderBody()
+        </div>
+    </div>
+    <div class="board footer">
+        <div class="container">
+            <div class="text-center">
+                &copy; 2017 - All rights reserved.
+                <a href="~/">Home</a>
+                <a href="~/home/about">About</a>
+            </div>
+        </div>
+    </div>
+    <div id="docPreview"></div>
+    <script src="~/lib/jquery/jquery-3.2.1.min.js"></script>
+    <script src="~/lib/bootstrap/js/bootstrap.min.js"></script>
+    <script src="~/lib/dropzone/dropzone.min.js"></script>
+    <script src="~/js/dalwizey.min.js"></script>
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

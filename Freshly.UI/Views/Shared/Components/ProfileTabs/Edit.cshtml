@@ -1,0 +1,54 @@
+﻿@model UserUpdateModel
+@{
+    ViewData["Title"] = "Account Profile update";
+}
+<div class="panel panel-default">
+    <div class="panel-body">
+        <h3>Update basic profile information</h3>
+        <hr />
+        <p class="text-danger">
+            <b>NOTE</b>:
+            The system will automatically log off the owner of this account once you click on the <b>Update</b> button below.
+            If this is your account, you will be required to log back in to continue.
+        </p>
+        <form id="frmEdit" asp-controller="Account" asp-action="Edit" class="form-horizontal" method="post">
+            @((ViewBag.Msg == null) ? "" : Html.Raw(ViewBag.Msg))
+            <input type="hidden" id="UserId" name="UserId" value="@Model.UserId" />
+            <div class="form-group">
+                <label for="FirstName" class="col-md-2 control-label">First Name:</label>
+                <div class="col-md-10">
+                    <input type="text" id="FirstName" name="FirstName" autofocus class="form-control" maxlength="256" required title="First Name" value="@Model.FirstName" />
+                    <span asp-validation-for="FirstName" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="LastName" class="col-md-2 control-label">Last Name:</label>
+                <div class="col-md-10">
+                    <input type="text" id="LastName" name="LastName" class="form-control" maxlength="256" required title="Last Name" value="@Model.LastName" />
+                    <span asp-validation-for="LastName" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="Email" class="col-md-2 control-label">Email:</label>
+                <div class="col-md-10">
+                    <input type="text" id="Email" name="Email" value="@Model.Email" class="form-control" maxlength="256" required title="Email" />
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="PhoneNumber" class="col-md-2 control-label">Phone Number:</label>
+                <div class="col-md-10">
+                    <input type="text" id="PhoneNumber" name="PhoneNumber" class="form-control" maxlength="128" value="@Model.PhoneNumber" title="Phone Number" />
+                    <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-md-10 col-md-offset-2">
+                    <button type="Submit" id="btnUpdate" name="btn" class="btn btn-primary postr">Update</button>
+                </div>
+            </div>
+
+        </form>
+    </div>
+</div>

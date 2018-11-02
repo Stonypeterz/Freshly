@@ -1,0 +1,33 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="description" content="@(ViewData["Description"] == null ? "" : ViewData["Description"].ToString()) - Stonypeterz Tecknology Ltd" />
+    <meta name="author" content="Stonypeterz Technology Ltd" />
+    <meta name="robots" content="follow, index" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Stonypeterz&trade;</title>
+    <link rel="icon" href="~/Logo48x48.ico" />
+    <environment include="Development">
+        <link rel="stylesheet" href="~/lib/bootstrap/css/bootstrap.css" />
+        <link href="~/lib/fontawesome/css/fontawesome-all.css" rel="stylesheet" />
+        <link rel="stylesheet" href="~/css/shellstyle.css" />
+    </environment>
+    <environment exclude="Development">
+        <link rel="stylesheet" href="~/lib/bootstrap/css/bootstrap.min.css" />
+        <link href="~/lib/fontawesome/css/fontawesome-all.min.css" rel="stylesheet" />
+        <link rel="stylesheet" href="~/css/shellstyle.min.css" asp-append-version="true" />
+    </environment>
+</head>
+<body>
+    <div id="coverpage"><span class="fa fa-cog fa-5x fa-spin"></span><h4>Please wait, we are working.</h4></div>
+    <a href="~/im/chat" class="feedback">Chat with us (customer care)<span class="pull-right"><i class="fa fa-commenting"></i></span></a>
+    @Html.Partial("_header")
+    <div id="page-container">
+        @RenderBody()
+    </div>
+    @Html.Partial("_FooterPartial")
+    @RenderSection("scripts", required: false)
+</body>
+</html>

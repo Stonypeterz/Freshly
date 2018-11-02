@@ -1,0 +1,9 @@
+﻿@{
+    if (Context.Request.IsAjaxRequest() == false) {
+        if(Context.User?.Identity?.IsAuthenticated == true) {
+            Layout = "~/views/shared/_Shell.cshtml";
+        } else {
+            Layout = "~/views/shared/_Layout.cshtml";
+        }
+    }
+}

@@ -1,0 +1,30 @@
+﻿@model UserAssignedGroups
+@{
+    Layout = null;
+}
+<div class="panel panel-default">
+    <div class="panel-body">
+        <h3>Groups @Model.FullName's been assigned to</h3>
+        <hr />
+        <form action="~/account/addtogroups" method="post">
+            <input type="hidden" name="tab" value="groups" />
+            <input type="hidden" name="UserId" value="@Model.UserId" />
+            <ul class="list-unstyled">
+                @if (User.AdheresTo(PolicyTypes.AddUserToGroups)) {
+                    foreach (var item in Model.Groups) {
+                        <li class="form-group"><label for="@item.GroupName"><input type="checkbox" id="@item.GroupName" name="GroupNames" value="@item.GroupName" @(item.IsAssigned ? "checked" : "") /> @item.GroupName</label></li>
+                    }
+                    <li class="form-group">
+                        <button type="submit" class="btn btn-primary postr" data-host="#accountdetails">Update</button>
+                    </li>
+                } else {
+                    foreach (var item in Model.Groups) {
+                        if (item.IsAssigned) {
+                            <li class="form-group">@item.GroupName</li>
+                        }
+                    }
+                }
+            </ul>
+        </form>
+    </div>
+</div>

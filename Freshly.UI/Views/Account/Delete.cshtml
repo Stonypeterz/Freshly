@@ -1,0 +1,25 @@
+﻿@model ApplicationUser
+@{
+    ViewBag.Title = $"Deleting {Model.FirstName} {Model.LastName}'s account profile.";
+}
+<div class="board cover">
+    <div class="container">
+        <div class="minibox">
+            <img src="~/account/avatar/@Model.UserId" class="img-circle img-responsive" alt="Avatar" />
+            <form action="~/account/delete/@Model.UserId" method="post">
+                <h4 class="text-center">@Model.FirstName @Model.LastName</h4>
+                <div class="form-group">
+                    <div class="alert alert-warning">
+                        You are about to delete this account. This action is not reversible and you will lose all the information bound to this account. Do you want to continue?
+                    </div>
+                </div>
+                <div class="form-group">
+                    <button type="submit" class="btn btn-block btn-danger">Yes! Delete this account</button>
+                </div>
+                <div class="form-group">
+                    <a href="/@("@" + Model.UserId)" class="btn btn-block btn-primary">No! Return to this account profile</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

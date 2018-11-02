@@ -1,0 +1,13 @@
+@model  ResponseObject
+@{
+    ViewBag.Title = string.IsNullOrEmpty(Model.Title) ? "Response" : Model.Title;
+}
+<div class="board cover">
+    <div class="container">
+        <h2>@ViewBag.Title</h2>
+        <hr />
+        <div alert="Model">
+            
+        </div>
+    </div>
+</div>

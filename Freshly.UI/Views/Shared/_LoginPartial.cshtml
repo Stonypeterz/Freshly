@@ -1,0 +1,32 @@
+﻿@using Freshly.Identity
+@if (User.Identity.IsAuthenticated)
+{
+    <form id="frmLogout" method="post" action="~/account/logout">
+        <ul class="nav navbar-nav navbar-right">
+            <li>
+                <a href="~/@("@" + User.Identity.Name)" class="profile-link getr">
+                    <span>@User.GetFullName()</span><img src="~/account/avatar/@User.Identity.Name" alt="User Avatar" class="img img-responsive" />
+                </a>
+            </li>
+            <li class="dropdown">
+                <a id="manageAccount" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" href="~/@("@" + User.Identity.Name)" class="dropdown-toggle" title="Manage account"><span class="visible-xs">Manage Account</span><span class="glyphicon glyphicon-cog cog"></span></a>
+                <ul class="dropdown-menu" aria-labelledby="manageAccount">
+                    <li><a href="~/account/changepassword" class="ddm">Change Password</a></li>
+                    <li><a href="~/account/edit/@User.Identity.Name" class="ddm">Edit Profile</a></li>
+                </ul>
+            </li>
+            <li><a href="#" class="log-in-out" onclick="javascript:$('#frmLogout').submit();">Logout</a></li>
+        </ul>
+    </form>
+}
+else
+{
+    <ul class="nav navbar-nav navbar-right">
+        <li>
+            <a href="~/account/signup" class="profile-link" title="Sign up">
+                <span>Sign up</span><span class="img"><i class="glyphicon glyphicon-user"></i></span>
+            </a>
+        </li>
+        <li><a href="~/account/login" class="log-in-out">Login</a></li>
+    </ul>
+}
