@@ -39,23 +39,25 @@ namespace Freshly.UI
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
-            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-                .AddJwtBearer(option =>
+            services.AddFreshly(obj =>
+            {
+                obj.ConnectionString = Configuration.GetConnectionString("ConnStr");
+                obj.TokenIssuer = cfg["ServerUrl"];
+                obj.TokenAudience = cfg["ServerUrl"];
+                obj.TokenKey= cfg["Tovapaky"];
+                obj.PolicyType = typeof(PolicyTypes);
+                obj.GroupType = typeof(GroupTypes);
+                obj.DefaultUser = new ApplicationUser()
                 {
-                    option.RequireHttpsMetadata = true;
-                    option.SaveToken = false;
-                    option.TokenValidationParameters = new TokenValidationParameters()
-                    {
-                        ValidateIssuerSigningKey = true,
-                        ValidIssuer = cfg["ServerUrl"],
-                        ValidAudience = cfg["ServerUrl"],
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(cfg["Tovapaky"]))
-                    };
-                })
-                .AddCookie(option => 
-                {
-                    option.SlidingExpiration = true;
-                });
+                    UserId = "Stonypeterz",
+                    FirstName = "Stephen",
+                    LastName = "Eze",
+                    Email = "e.stephen@Freshly.com",
+                    PhoneNumber = "07088281148",
+                    Gender = "Male",
+                    Password = "Admin.1st"
+                };
+            });
 
             services.Configure<GlobalVariables>((gv) => {
                 gv.CompanyName = cfg["CompanyName"];
@@ -69,23 +71,6 @@ namespace Freshly.UI
                 gv.FeedBackMail = cfg["FeedBackMail"];
                 gv.Tovapaky = cfg["Tovapaky"];
                 gv.PageSize = int.Parse(cfg["PageSize"]);
-            });
-
-            services.AddFreshly(obj =>
-            {
-                obj.ConnectionString = Configuration.GetConnectionString("ConnStr");
-                obj.PolicyType = typeof(PolicyTypes);
-                obj.GroupType = typeof(GroupTypes);
-                obj.DefaultUser = new ApplicationUser()
-                {
-                    UserId = "Stonypeterz",
-                    FirstName = "Stephen",
-                    LastName = "Eze",
-                    Email = "e.stephen@Freshly.com",
-                    PhoneNumber = "07088281148",
-                    Gender = "Male",
-                    Password = "Admin.1st"
-                };
             });
 
             services.AddTransient<ICustomHelpers, CustomHelpers>();
