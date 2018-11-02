@@ -9,6 +9,7 @@
     <PackageTags>Freshly, Identity, JWT, Token, Cookie</PackageTags>
     <RepositoryUrl>https://www.github.com/stonypeterz/freshly</RepositoryUrl>
     <PackageIconUrl>https://www.stonypeterz.com/Logo48x48.ico</PackageIconUrl>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <ItemGroup>
