@@ -54,9 +54,10 @@ namespace Freshly.Identity
 
         internal static Task RedirectToLoginAsync(RedirectContext<CookieAuthenticationOptions> context)
         {
-            //context.Response.Headers["Location"] = context.RedirectUri;
-            //context.Response.StatusCode = 401;
-            return Task.CompletedTask;
+            var ur = context.RedirectUri;
+            if (ur?.ToLower().Contains("returnurl") == false)
+                context.RedirectUri = string.Concat(ur, ur.Contains("?") ? "&ReturnUrl=" : "?ReturnUrl=");
+            return Task.Run(() => context.Response.Redirect(context.RedirectUri));
         }
     }
 }

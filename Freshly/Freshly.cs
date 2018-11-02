@@ -35,63 +35,29 @@ namespace Freshly.Identity
             return granted;
         }
 
-        //public static AuthenticationBuilder AddFreshly(this IServiceCollection services)
-        //{
-        //    return services.AddFreshly(null);
-        //}
-
-        //public static AuthenticationBuilder AddFreshly(this IServiceCollection services, Action<FreshlyOptions> authoption)
-        //{
-        //    authoption?.Invoke(O);
-        //    SetDefaults(O.Defaults);
-        //    var builder = services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-        //        //.AddCookie(Opt => { Opt = O.CookieOptions; })
-        //        .AddJwtBearer(opt => { opt = O.JwtOptions; });
-        //    builder.Services.AddAuthorization(options =>
-        //    {
-        //        if (LstPolicy.Count > 0)
-        //        {
-        //            foreach (var ar in LstPolicy)
-        //            {
-        //                options.AddPolicy(ar, policy => {
-        //                    policy.Requirements.Add(new AccessRuleRequirement(ar));
-        //                    policy.AddAuthenticationSchemes(CookieAuthenticationDefaults.AuthenticationScheme, JwtBearerDefaults.AuthenticationScheme);
-        //                });
-        //            }
-        //        }
-        //    });
-
-        //    services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-        //    services.AddTransient<IAuthorizationHandler, AccessRuleHandler>();
-        //    services.AddTransient<UserManager>();
-        //    services.AddTransient<GroupManager>();
-
-        //    return builder;
-        //}
-
         public static AuthenticationBuilder AddFreshly(this AuthenticationBuilder builder, Action<FreshlyDefaults> defaults)
         {
             defaults?.Invoke(D);
             SetDefaults(D);
 
             builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>()
-                .AddTransient<IAuthorizationHandler, AccessRuleHandler>()
-                .AddTransient<UserManager>()
-                .AddTransient<GroupManager>()
-                .AddAuthorization(options =>
+            .AddTransient<IAuthorizationHandler, AccessRuleHandler>()
+            .AddTransient<UserManager>()
+            .AddTransient<GroupManager>()
+            .AddAuthorization(options =>
+            {
+                if (D.Policies.Count > 0)
                 {
-                    if (D.Policies.Count > 0)
+                    foreach (var ar in D.Policies)
                     {
-                        foreach (var ar in D.Policies)
+                        options.AddPolicy(ar, policy =>
                         {
-                            options.AddPolicy(ar, policy =>
-                            {
-                                policy.Requirements.Add(new AccessRuleRequirement(ar));
-                                //policy.AddAuthenticationSchemes(CookieAuthenticationDefaults.AuthenticationScheme, JwtBearerDefaults.AuthenticationScheme);
-                            });
-                        }
+                            policy.Requirements.Add(new AccessRuleRequirement(ar));
+                            //policy.AddAuthenticationSchemes(CookieAuthenticationDefaults.AuthenticationScheme, JwtBearerDefaults.AuthenticationScheme);
+                        });
                     }
-                });
+                }
+            });
 
             return builder;
         }
@@ -122,7 +88,7 @@ namespace Freshly.Identity
                 .AddJwtBearer(option =>
                 {
                     option.RequireHttpsMetadata = true;
-                    option.SaveToken = false;
+                    option.SaveToken = true;
                     option.TokenValidationParameters = new TokenValidationParameters()
                     {
                         ValidateIssuerSigningKey = true,
@@ -132,9 +98,11 @@ namespace Freshly.Identity
                     };
                 })
                 .AddCookie(option =>
-            {
-                option.SlidingExpiration = true;
-            }).Services;
+                {
+                    option.SlidingExpiration = true;
+                    option.Events.OnValidatePrincipal = CookieEvents.ValidateAsync;
+                })
+                .Services;
         }
 
         internal static void SetDefaults(FreshlyDefaults D)

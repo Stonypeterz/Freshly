@@ -9,11 +9,15 @@ using Freshly.UI.Models;
 using Freshly.Identity.Models;
 using System.IO;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace Freshly.UI.Controllers
 {
+    [Authorize(AuthenticationSchemes = authScheme)]
     public class AccountController : Controller
     {
+        private const string authScheme = CookieAuthenticationDefaults.AuthenticationScheme + "," + JwtBearerDefaults.AuthenticationScheme;
         private readonly UserManager userManager;
         private readonly GroupManager groupManager;
         private readonly ICustomHelpers AppUtil;
