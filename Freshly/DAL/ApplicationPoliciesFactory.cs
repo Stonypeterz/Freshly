@@ -8,7 +8,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 
-namespace Freshly.Identity.DAL {
+namespace Freshly.Identity {
 
     internal class ApplicationPoliciesFactory : BaseObj {
         

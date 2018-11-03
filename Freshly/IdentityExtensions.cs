@@ -1,5 +1,4 @@
-﻿using Freshly.Identity.DAL;
-using System.Linq;
+﻿using System.Linq;
 using System.Security.Claims;
 
 namespace Freshly.Identity

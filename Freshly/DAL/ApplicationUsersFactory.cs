@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 using System.Security.Claims;
 using Freshly.Identity.Models;
 
-namespace Freshly.Identity.DAL {
+namespace Freshly.Identity {
 
     internal class ApplicationUsersFactory : BaseObj {
 

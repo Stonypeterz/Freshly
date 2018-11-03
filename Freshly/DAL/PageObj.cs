@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Freshly.Identity.DAL {
+namespace Freshly.Identity {
 
     public class Page<T>
     {

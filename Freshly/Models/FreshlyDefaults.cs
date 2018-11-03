@@ -1,5 +1,4 @@
-﻿using Freshly.Identity.DAL;
-using Freshly.Identity.Models;
+﻿using Freshly.Identity.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using System;

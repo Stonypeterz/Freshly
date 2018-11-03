@@ -6,7 +6,6 @@ using System.Text;
 using System.Security.Claims;
 using Freshly.Identity.Models;
 using System.Threading.Tasks;
-using Freshly.Identity.DAL;
 using Microsoft.Extensions.Options;
 using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Authentication.Cookies;

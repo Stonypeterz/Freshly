@@ -5,12 +5,12 @@
     <Authors>Stephen O. Eze</Authors>
     <Company>Stonypeterz Technology Ltd.</Company>
     <Product>Freshly</Product>
-    <Description>A look at Identity and the authorization policy from a different perspective; A perspective not too far from Microsoft's but somewhat an addition. It's opinionated in many ways</Description>
+    <Description>ASP.Net Core Identity and the Authorization Policy from a different perspective; A perspective not too far from Microsoft's but somewhat an addition to it. It's opinionated in many ways.</Description>
     <PackageTags>Freshly, Identity, JWT, Token, Cookie</PackageTags>
     <RepositoryUrl>https://www.github.com/stonypeterz/freshly</RepositoryUrl>
     <PackageIconUrl>https://www.stonypeterz.com/Logo48x48.ico</PackageIconUrl>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>1.0.2</Version>
+    <Version>1.0.3</Version>
   </PropertyGroup>
 
   <ItemGroup>

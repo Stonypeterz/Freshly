@@ -61,6 +61,33 @@ namespace Freshly.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to USE [master]
+        ///GO
+        ///CREATE DATABASE [{0}];
+        ///GO
+        ///USE [{0}];
+        ///GO
+        ////****** Object:  Table [dbo].[ApplicationGroups]    Script Date: 11/3/2018 1:49:59 PM ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N&apos;[dbo].[ApplicationGroups]&apos;) AND type in (N&apos;U&apos;))
+        ///BEGIN
+        ///CREATE TABLE [dbo].[ApplicationGroups](
+        ///	[GroupName] [nvarchar](128) NOT NULL,
+        /// CONSTRAINT [PK_ApplicationGroups] PRIMARY KEY CLUSTERED 
+        ///(
+        ///	[GroupName] ASC
+        ///)WITH (PAD_IND [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string DatabaseSchema {
+            get {
+                return ResourceManager.GetString("DatabaseSchema", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
         internal static byte[] FemaleAvatar {

@@ -9,7 +9,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using Freshly.Identity.Models;
 
-namespace Freshly.Identity.DAL {
+namespace Freshly.Identity {
 
     internal class GroupPoliciesFactory : BaseObj {
         

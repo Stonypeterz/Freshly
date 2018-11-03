@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.Http.Extensions;
 using System.Net.Mail;
 using System.Net.Mime;
 using Freshly.Identity.Models;
-using Freshly.Identity.DAL;
 
 namespace Freshly.Identity
 {

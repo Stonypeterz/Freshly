@@ -7,7 +7,7 @@ using System.Threading;
 using System.Data.SqlClient;
 using System.Collections.Generic;
 
-namespace Freshly.Identity.DAL {
+namespace Freshly.Identity {
 
     internal abstract class BaseObj : IDisposable
     {
