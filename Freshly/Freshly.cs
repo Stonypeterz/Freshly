@@ -116,6 +116,8 @@ namespace Freshly.Identity
             var ps = D?.Policies;
             var AdminGroup = "Administrator";
 
+            (new DatabaseInitializer()).SetupDB();
+
             try { AG.AddGroup(AdminGroup); } catch(Exception ex) { };
             try {
                 if (D?.DefaultUser != null) {

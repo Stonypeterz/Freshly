@@ -10,8 +10,8 @@ namespace Freshly.Identity
     internal class DatabaseInitializer : BaseObj
     {
 
-        public string SqlQuery { get; set; }
-        public string DBName { get; set; }
+        private string SqlQuery { get; set; }
+        private string DBName { get; set; }
 
         public DatabaseInitializer()
         {
@@ -24,22 +24,42 @@ namespace Freshly.Identity
         public bool SetupDB()
         {
             bool f = true;
-            var sql = string.Format(SqlQuery, DBName);
+            var sql = $"DECLARE @dbname nvarchar(128); SET @dbname = N'{DBName}'; IF NOT (EXISTS (SELECT name FROM master.dbo.sysdatabases WHERE ('[' + name + ']' = @dbname OR name = @dbname))) CREATE DATABASE {DBName};";
             try
             {
-                using (var tConn = new SqlConnection(Freshly.D.ConnectionString.Replace(DBName, "master")))
+                using (var cmd = new SqlCommand(sql, Conn))
                 {
-                    using (var cmd = new SqlCommand(sql, tConn))
+                    //Create database
+                    OpenConnection();
+                    cmd.ExecuteNonQuery();
+                    OpenConnection();
+                }
+                //Create all the tables
+                var tbls = SqlQuery.Split("GO");
+                Conn = new SqlConnection(Freshly.D.ConnectionString);
+                using (var cmd = new SqlCommand(sql, Conn))
+                {
+                    try
                     {
-                        tConn.Open();
-                        cmd.ExecuteNonQuery();
-                        tConn.Close();
+                        OpenConnection();
+                        foreach (string tb in tbls)
+                        {
+                            cmd.CommandText = tb;
+                            cmd.ExecuteNonQuery();
+                        }
+                        CloseConnection();
+                    }
+                    catch(Exception ex)
+                    {
+                        f = false;
+                        CloseConnection();
                     }
                 }
             }
             catch(Exception ex)
             {
                 f = false;
+                CloseConnection();
             }
             return f;
         }
