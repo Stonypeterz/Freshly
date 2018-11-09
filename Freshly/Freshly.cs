@@ -22,7 +22,7 @@ namespace Freshly.Identity
     public static class Freshly
     {
         private static List<string> LstPolicy = new List<string>();
-        internal static FreshlyDefaults D { get; set; }  = new FreshlyDefaults();
+        internal static FreshlyOptions D { get; set; }  = new FreshlyOptions();
 
         internal static bool CheckAccess(string usrName, string accessRule)
         {
@@ -34,7 +34,7 @@ namespace Freshly.Identity
             return granted;
         }
 
-        public static AuthenticationBuilder AddFreshly(this AuthenticationBuilder builder, Action<FreshlyDefaults> defaults)
+        public static AuthenticationBuilder AddFreshly(this AuthenticationBuilder builder, Action<FreshlyOptions> defaults)
         {
             defaults?.Invoke(D);
             SetDefaults(D);
@@ -61,7 +61,7 @@ namespace Freshly.Identity
             return builder;
         }
 
-        public static IServiceCollection AddFreshly(this IServiceCollection services, Action<FreshlyDefaults> defaults)
+        public static IServiceCollection AddFreshly(this IServiceCollection services, Action<FreshlyOptions> defaults)
         {
             defaults?.Invoke(D);
             SetDefaults(D);
@@ -84,6 +84,18 @@ namespace Freshly.Identity
                     }
                 })
                 .AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+                .AddCookie(option =>
+                {
+                    option.LoginPath = new PathString("/account/login");
+                    option.AccessDeniedPath = new PathString("/error/accessdenied");
+                    option.SlidingExpiration = true;
+                    option.ExpireTimeSpan = TimeSpan.FromMinutes(15);
+                    option.Cookie = new CookieBuilder()
+                    {
+                        Domain = D.CookieDomain
+                    };
+                    option.Events.OnValidatePrincipal = CookieEvents.ValidateAsync;
+                })
                 .AddJwtBearer(option =>
                 {
                     option.RequireHttpsMetadata = true;
@@ -96,15 +108,10 @@ namespace Freshly.Identity
                         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(D.TokenKey))
                     };
                 })
-                .AddCookie(option =>
-                {
-                    option.SlidingExpiration = true;
-                    option.Events.OnValidatePrincipal = CookieEvents.ValidateAsync;
-                })
                 .Services;
         }
 
-        internal static void SetDefaults(FreshlyDefaults D)
+        internal static void SetDefaults(FreshlyOptions D)
         {
             var AG = new ApplicationGroupsFactory();
             var AP = new ApplicationPoliciesFactory();

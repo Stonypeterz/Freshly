@@ -171,47 +171,9 @@ namespace Freshly.Identity
 
         public async Task<string> GenerateTokenAsync(string userid, string password)
         {
-            var user = await GetUserAsync(userid);
-
-            if (user == null) throw new Exception("Invalid user id.");
-            else
-            {
-                if (user.CurrentStatus != AccountStatus.Active)
-                    throw new Exception($"This account is currently {user.CurrentStatus}.");
-                if (ComparePasswords(user, password))
-                {
-                    var claims = new[]
-                    {
-                        new Claim(ClaimTypes.Name, user.UserId),
-                        new Claim(ClaimTypes.Role, user.Groups),
-                        new Claim(JwtRegisteredClaimNames.NameId, user.UserId),
-                        new Claim(JwtRegisteredClaimNames.Sub, user.UserId),
-                        new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                        //new Claim(ClaimTypes.MobilePhone, user.PhoneNumber),
-                        //new Claim(ClaimTypes.Email, user.Email),
-                        //new Claim(JwtRegisteredClaimNames.GivenName, user.FirstName),
-                        //new Claim(JwtRegisteredClaimNames.FamilyName, user.LastName),
-                        //new Claim(JwtRegisteredClaimNames.Gender, user.Gender)
-                    };
-
-                    var tvp = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Freshly.D.TokenKey));
-                    var creds = new SigningCredentials(tvp, SecurityAlgorithms.HmacSha256);
-
-                    var token = new JwtSecurityToken(
-                        issuer: Freshly.D.TokenIssuer,
-                        audience: Freshly.D.TokenAudience,
-                        claims: claims,
-                        notBefore: DateTime.UtcNow,
-                        expires: DateTime.UtcNow.AddDays(30),
-                        signingCredentials: creds);
-
-                    return new JwtSecurityTokenHandler().WriteToken(token);
-                }
-                else
-                {
-                    throw new Exception("Wrong password.");
-                }
-            }
+            return await GenerateTokenAsync(userid, password, 
+                Freshly.D.TokenIssuer, Freshly.D.TokenAudience, 
+                Freshly.D.TokenKey);
         }
 
         public async Task<string> GenerateTokenAsync(string userid, string password, string authority, string audience, string seckey)
