@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Freshly.Identity {
 
-    public class Page<T>
+    public class ItemsPage<T>
     {
         public List<T> Items { get; set; }
         public int Number { get; set; }
@@ -11,7 +11,7 @@ namespace Freshly.Identity {
         public string filterQ { get; set; }
         public int TotalPages { get; set; }
 
-        public Page(List<T> lst, int PNo, int PSize, int TotP, string fQ)
+        public ItemsPage(List<T> lst, int PNo, int PSize, int TotP, string fQ)
         {
             Items = lst;
             Number = PNo;

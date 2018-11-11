@@ -37,7 +37,7 @@ namespace Freshly.Identity {
             return ExecuteCommand(sqlText, sqlParams);
 		}
         
-        public Page<ApplicationUser> GetPage(int PageNo, int PageSize = 10, string filterQ = "0") {
+        public ItemsPage<ApplicationUser> GetPage(int PageNo, int PageSize = 10, string filterQ = "0") {
 			using (SqlCommand cmd = new SqlCommand("Declare @Total int;if(@filterQ = '0') Begin With PageObject As (Select Row_Number() Over (Order By [FirstName]) As RowNumber, [UserId], [FirstName], [LastName], [DateOfBirth], [Gender], [Email], [PhoneNumber], [Password], [IsLogedIn], [LastLoginDate], [AccountStatus] From dbo.[ApplicationUsers]) Select [UserId], [FirstName], [LastName], [DateOfBirth], [Gender], [Email], [PhoneNumber], [Password], [IsLogedIn], [LastLoginDate], [AccountStatus], [LockWindow], [MaxLoginAttempts] From PageObject Q Where Q.RowNumber <= (@PageNo * @PageSize) And Q.RowNumber > ((@PageNo * @PageSize) - @PageSize);Select @Total = Count(*) From dbo.[ApplicationUsers];if(@Total % @PageSize = 0) Select @Total / @PageSize As 'PageCount' else Select ((@Total - (@Total % @PageSize))/@PageSize) + 1 As 'PageCount' End else Begin With PageObject As (Select Row_Number() Over (Order By [FirstName]) As RowNumber, [UserId], [FirstName], [LastName], [DateOfBirth], [Gender], [Email], [PhoneNumber], [Password], [IsLogedIn], [LastLoginDate], [AccountStatus], [LockWindow], [MaxLoginAttempts] From dbo.[ApplicationUsers] Where [UserId] Like '%' + @filterQ + '%' Or [FirstName] Like '%' + @filterQ + '%' Or [LastName] Like '%' + @filterQ + '%' Or [Gender] Like '%' + @filterQ + '%' Or [Email] Like '%' + @filterQ + '%' Or [PhoneNumber] Like '%' + @filterQ + '%' Or [Password] Like '%' + @filterQ + '%' Or [AccountStatus] Like '%' + @filterQ + '%') Select [UserId], [FirstName], [LastName], [DateOfBirth], [Gender], [Email], [PhoneNumber], [Password], [IsLogedIn], [LastLoginDate], [AccountStatus], [LockWindow], [MaxLoginAttempts] From PageObject Q Where Q.RowNumber <= (@PageNo * @PageSize) And Q.RowNumber > ((@PageNo * @PageSize) - @PageSize);Select @Total = Count(*) From dbo.[ApplicationUsers] Where [UserId] Like '%' + @filterQ + '%' Or [FirstName] Like '%' + @filterQ + '%' Or [LastName] Like '%' + @filterQ + '%' Or [Gender] Like '%' + @filterQ + '%' Or [Email] Like '%' + @filterQ + '%' Or [PhoneNumber] Like '%' + @filterQ + '%' Or [Password] Like '%' + @filterQ + '%' Or [AccountStatus] Like '%' + @filterQ + '%';if(@Total % @PageSize = 0) Select @Total / @PageSize As 'PageCount' else Select ((@Total - (@Total % @PageSize))/@PageSize) + 1 As 'PageCount' End", Conn)) {
 				cmd.CommandTimeout = ComTimeout;
 				cmd.Parameters.AddWithValue("@PageNo", PageNo);
@@ -71,7 +71,7 @@ namespace Freshly.Identity {
 							TotalPages = (int)dr["PageCount"];
 						}
 					}
-					return new Page<ApplicationUser>(objList, PageNo, PageSize, TotalPages, filterQ);
+					return new ItemsPage<ApplicationUser>(objList, PageNo, PageSize, TotalPages, filterQ);
 					}
 				finally {
 					CloseConnection();

@@ -31,7 +31,7 @@ namespace Freshly.Identity
             return Task.FromResult(f);
         }
 
-        public Task<Page<ApplicationUser>> GetUsersAsync(int pageno, int pagesize = 20, string searchQ = null)
+        public Task<ItemsPage<ApplicationUser>> GetUsersAsync(int pageno, int pagesize = 20, string searchQ = null)
         {
             var lst = DF.GetPage(pageno, pagesize, searchQ);
             return Task.FromResult(lst);
