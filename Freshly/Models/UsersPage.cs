@@ -1,23 +1,23 @@
 using System;
 using System.Collections.Generic;
 
-namespace Freshly.Identity {
+namespace Freshly.Identity.Models {
 
-    public class ItemsPage<T>
+    public class UsersPage
     {
-        public List<T> Items { get; set; }
+        public List<ApplicationUser> Items { get; set; }
         public int Number { get; set; }
         public int Size { get; set; }
-        public string filterQ { get; set; }
+        public string FilterQ { get; set; }
         public int TotalPages { get; set; }
 
-        public ItemsPage(List<T> lst, int PNo, int PSize, int TotP, string fQ)
+        public UsersPage(List<ApplicationUser> lst, int PNo, int PSize, int TotP, string fQ)
         {
             Items = lst;
             Number = PNo;
             Size = PSize;
             TotalPages = TotP;
-            filterQ = fQ;
+            FilterQ = fQ;
         }
     }
 
