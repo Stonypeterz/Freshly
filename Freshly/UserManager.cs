@@ -33,6 +33,8 @@ namespace Freshly.Identity
 
         public Task<UsersPage> GetUsersAsync(int pageno, int pagesize = 20, string searchQ = null)
         {
+            if (pageno == 0) pageno = 1;
+            if (pagesize == 0) pagesize = 20;
             var lst = DF.GetPage(pageno, pagesize, searchQ);
             return Task.FromResult(lst);
         }
