@@ -44,7 +44,7 @@ namespace Freshly.UI
                 obj.ConnectionString = Configuration.GetConnectionString("ConnStr");
                 obj.TokenIssuer = cfg["ServerUrl"];
                 obj.TokenAudience = cfg["ServerUrl"];
-                obj.TokenKey= cfg["Tovapaky"];
+                obj.TokenKey = cfg["Tovapaky"];
                 obj.PolicyType = typeof(PolicyTypes);
                 obj.GroupType = typeof(GroupTypes);
                 obj.DefaultUser = new ApplicationUser()
