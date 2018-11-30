@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Security.Claims;
 
 namespace Freshly.Identity
@@ -79,6 +80,13 @@ namespace Freshly.Identity
                 return fn?.Value;
             }
             return "";
+        }
+
+        public static bool SetOnlineStatus(this ClaimsPrincipal usr, string status)
+        {
+            if (status.Length > 16) throw new Exception("The [status] must not be more than 16 characters long");
+            var f = (new ApplicationUsersFactory()).SetOnlineStatus(usr.Identity.Name, status);
+            return f;
         }
 
     }

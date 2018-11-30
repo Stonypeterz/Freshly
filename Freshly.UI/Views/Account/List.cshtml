@@ -1,7 +1,18 @@
-﻿
+﻿@model UsersPage  
 @{
     ViewData["Title"] = "View";
 }
 
-<h2>View</h2>
+<div class="board starter">
+    <div class="container">
+        <h2>List of users</h2>
+        <hr />
+        @foreach (var usr in Model.Items)
+        {
+            <div>
+                @($"{usr.FirstName} {usr.LastName} ({usr.OnlineStatus})")
+            </div>
+        }
+    </div>
+</div>
 

@@ -14,16 +14,16 @@ namespace Freshly.Identity.Models
         public string Gender { get; set; }
         public string Email { get; set; }
         public string PhoneNumber { get; set; } = null;
+        public string CurrentStatus { get; internal set; } = AccountStatus.Pending;
+        public string OnlineStatus { get; internal set; } = "Available";
         public string Password { get; set; }
         public string Groups { get; internal set; } = "";
-        public string Status { get { return CurrentStatus; } }
         public bool IsActive { get { return CurrentStatus == AccountStatus.Active; } }
-        internal bool IsLogedIn { get; set; } = false;
-        internal DateTime? LastLoginDate { get; set; } = null;
-        internal string CurrentStatus { get; set; } = AccountStatus.Pending;
-        internal DateTime? LastLockDate { get; set; } = null;
-        internal DateTime LastActivityDate { get; set; }
-        internal DateTime RegDate { get; set; }
+        public bool IsLogedIn { get; internal set; } = false;
+        public DateTime? LastLoginDate { get; internal set; } = null;
+        public DateTime? LastLockDate { get; internal set; } = null;
+        public DateTime LastActivityDate { get; internal set; }
+        public DateTime RegDate { get; internal set; }
         
         public ApplicationUser() { }
         public ApplicationUser(bool activate) {

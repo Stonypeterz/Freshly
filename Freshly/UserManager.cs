@@ -33,9 +33,14 @@ namespace Freshly.Identity
 
         public Task<UsersPage> GetUsersAsync(int pageno, int pagesize = 20, string searchQ = null)
         {
+            return GetUsersAsync(null, pageno, pagesize, searchQ);
+        }
+
+        public Task<UsersPage> GetUsersAsync(string groupname, int pageno, int pagesize = 20, string searchQ = null)
+        {
             if (pageno == 0) pageno = 1;
             if (pagesize == 0) pagesize = 20;
-            var lst = DF.GetPage(pageno, pagesize, searchQ);
+            var lst = DF.GetPage(groupname, pageno, pagesize, searchQ);
             return Task.FromResult(lst);
         }
 
@@ -235,13 +240,28 @@ namespace Freshly.Identity
             return context.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
         }
 
+        /// <summary>
+        /// Sets a user account status to Active, Locked, Deleted or whatever else makes sence to you.
+        /// </summary>
+        /// <param name="UserId">The User Account Identifier (Username, Email or Phone number)</param>
+        /// <param name="status">The Status you want to change to</param>
+        /// <returns></returns>
         public Task<bool> ChangeStatusAsync(string UserId, Status status)
         {
-            var usr = DF.GetUserByID(UserId);
-            usr.CurrentStatus = status.ToString();
-            usr.LastLockDate = DateTime.UtcNow;
-            DF.Update(usr);
-            return Task.FromResult(true);
+            bool f = DF.ChangeStatus(UserId, status.ToString());
+            return Task.FromResult(f);
+        }
+
+        /// <summary>
+        /// Sets a User Account to Available, Busy or whatever else makes sence to you
+        /// </summary>
+        /// <param name="UserId">The User Account Identifier (Username, Email or Phone number)</param>
+        /// <param name="status">The Status you want to change to</param>
+        /// <returns></returns>
+        public Task<bool> SetOnlineStatusAsync(string UserId, string status)
+        {
+            var f = DF.SetOnlineStatus(UserId, status.ToString());
+            return Task.FromResult(f);
         }
 
         public Task<ResultStatus> ActivateAsync(string UserId)

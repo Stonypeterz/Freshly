@@ -137,9 +137,9 @@ namespace Freshly.UI.Controllers
         }
 
         [Authorize(Policy = PolicyTypes.ListUsers)]
-        public async Task<IActionResult> List(int pageno, int pagesize, string q)
+        public async Task<IActionResult> List(string gn, int pageno, int pagesize, string q)
         {
-            var lst = await userManager.GetUsersAsync(pageno, pagesize, q);
+            var lst = await userManager.GetUsersAsync(gn, pageno, pagesize, q);
             return View(lst);
         }
 

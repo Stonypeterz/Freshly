@@ -21,7 +21,7 @@ namespace Freshly.Identity {
 		}
         
         public int Create(ApplicationUser obj) {
-			var sqlText = "Insert Into dbo.[ApplicationUsers] ([UserId], [FirstName], [LastName], [DateOfBirth], [Gender], [Email], [PhoneNumber], [Password], [AccountStatus]) Values (@UserId, @FirstName, @LastName, @DateOfBirth, @Gender, @Email, @PhoneNumber, @Password, @AccountStatus)";
+			var sqlText = "Insert Into dbo.[ApplicationUsers] ([UserId], [FirstName], [LastName], [DateOfBirth], [Gender], [Email], [PhoneNumber], [Password], [AccountStatus], [OnlineStatus]) Values (@UserId, @FirstName, @LastName, @DateOfBirth, @Gender, @Email, @PhoneNumber, @Password, @AccountStatus, @OnlineStatus)";
             var sqlParams = new List<SqlParameter>
             {
                 DataHelper.CreateParameter("@UserId", SqlDbType.NVarChar, 128, obj.UserId),
@@ -31,54 +31,59 @@ namespace Freshly.Identity {
                 DataHelper.CreateParameter("@Gender", SqlDbType.NVarChar, 128, obj.Gender),
                 DataHelper.CreateParameter("@Email", SqlDbType.NVarChar, 256, obj.Email),
                 DataHelper.CreateParameter("@AccountStatus", SqlDbType.NVarChar, 256, obj.CurrentStatus),
+                DataHelper.CreateParameter("@OnlineStatus", SqlDbType.NVarChar, 16, obj.OnlineStatus),
                 DataHelper.CreateParameter("@PhoneNumber", SqlDbType.NVarChar, 128, obj.PhoneNumber, true),
                 DataHelper.CreateParameter("@Password", SqlDbType.NVarChar, -1, obj.Password)
             };
             return ExecuteCommand(sqlText, sqlParams);
 		}
         
-        public UsersPage GetPage(int PageNo, int PageSize = 10, string filterQ = "0") {
-			using (SqlCommand cmd = new SqlCommand("Declare @Total int;if(@filterQ = '0') Begin With PageObject As (Select Row_Number() Over (Order By [UserId]) As RowNumber, [UserId], [FirstName], [LastName], [DateOfBirth], [Gender], [Email], [PhoneNumber], [Password], [IsLogedIn], [LastLoginDate], [AccountStatus], [LastLockDate], [LastActivityDate], [RegDate] From dbo.[ApplicationUsers]) Select [UserId], [FirstName], [LastName], [DateOfBirth], [Gender], [Email], [PhoneNumber], [Password], [IsLogedIn], [LastLoginDate], [AccountStatus], [LastLockDate], [LastActivityDate], [RegDate] From PageObject Q Where Q.RowNumber <= (@PageNo * @PageSize) And Q.RowNumber > ((@PageNo * @PageSize) - @PageSize);Select @Total = Count(*) From dbo.[ApplicationUsers];if(@Total % @PageSize = 0) Select @Total / @PageSize As 'PageCount' else Select ((@Total - (@Total % @PageSize))/@PageSize) + 1 As 'PageCount' End else Begin With PageObject As (Select Row_Number() Over (Order By [UserId]) As RowNumber, [UserId], [FirstName], [LastName], [DateOfBirth], [Gender], [Email], [PhoneNumber], [Password], [IsLogedIn], [LastLoginDate], [AccountStatus], [LastLockDate], [LastActivityDate], [RegDate] From dbo.[ApplicationUsers] Where [UserId] Like '%' + @filterQ + '%' Or [FirstName] Like '%' + @filterQ + '%' Or [LastName] Like '%' + @filterQ + '%' Or [Gender] Like '%' + @filterQ + '%' Or [Email] Like '%' + @filterQ + '%' Or [PhoneNumber] Like '%' + @filterQ + '%' Or [Password] Like '%' + @filterQ + '%' Or [AccountStatus] Like '%' + @filterQ + '%') Select [UserId], [FirstName], [LastName], [DateOfBirth], [Gender], [Email], [PhoneNumber], [Password], [IsLogedIn], [LastLoginDate], [AccountStatus], [LastLockDate], [LastActivityDate], [RegDate] From PageObject Q Where Q.RowNumber <= (@PageNo * @PageSize) And Q.RowNumber > ((@PageNo * @PageSize) - @PageSize);Select @Total = Count(*) From dbo.[ApplicationUsers] Where [UserId] Like '%' + @filterQ + '%' Or [FirstName] Like '%' + @filterQ + '%' Or [LastName] Like '%' + @filterQ + '%' Or [Gender] Like '%' + @filterQ + '%' Or [Email] Like '%' + @filterQ + '%' Or [PhoneNumber] Like '%' + @filterQ + '%' Or [Password] Like '%' + @filterQ + '%' Or [AccountStatus] Like '%' + @filterQ + '%';if(@Total % @PageSize = 0) Select @Total / @PageSize As 'PageCount' else Select ((@Total - (@Total % @PageSize))/@PageSize) + 1 As 'PageCount' End", Conn)) {
-				cmd.CommandTimeout = ComTimeout;
-				cmd.Parameters.AddWithValue("@PageNo", PageNo);
-				cmd.Parameters.AddWithValue("@PageSize", PageSize);
-				cmd.Parameters.AddWithValue("@filterQ", string.IsNullOrEmpty(filterQ) == true ? "0" : filterQ);
-				List<ApplicationUser> objList = new List<ApplicationUser>();
-				ApplicationUser obj = null;
-				try {
-					OpenConnection();
-					using (SqlDataReader dr = cmd.ExecuteReader()) {
-						while (dr.Read()) {
-                            obj = new ApplicationUser
+        public UsersPage GetPage(string GroupName, int PageNo, int PageSize = 10, string filterQ = "0")
+        {
+            using (SqlCommand cmd = new SqlCommand("[dbo].[GetUsersList]", Conn))
+            {
+                cmd.CommandTimeout = ComTimeout;
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("@PageNo", PageNo);
+                cmd.Parameters.AddWithValue("@PageSize", PageSize);
+                cmd.Parameters.AddWithValue("@GroupName", string.IsNullOrEmpty(GroupName) == true ? "All" : GroupName);
+                cmd.Parameters.AddWithValue("@filterQ", string.IsNullOrEmpty(filterQ) == true ? "0" : filterQ);
+                List<UsersListItem> objList = new List<UsersListItem>();
+                UsersListItem obj = null;
+                try
+                {
+                    OpenConnection();
+                    using (SqlDataReader dr = cmd.ExecuteReader())
+                    {
+                        while (dr.Read())
+                        {
+                            obj = new UsersListItem
                             {
                                 UserId = (string)dr["UserId"],
                                 FirstName = (string)dr["FirstName"],
                                 LastName = (string)dr["LastName"],
-                                DateOfBirth = (dr["DateOfBirth"] == System.DBNull.Value) ? null : (DateTime?)dr["DateOfBirth"],
-                                Gender = (string)dr["Gender"],
-                                Email = (string)dr["Email"],
-                                PhoneNumber = (dr["PhoneNumber"] == System.DBNull.Value) ? null : (string)dr["PhoneNumber"],
-                                Password = (dr["Password"] == System.DBNull.Value) ? null : (string)dr["Password"],
                                 IsLogedIn = (bool)dr["IsLogedIn"],
-                                LastLoginDate = (dr["LastLoginDate"] == System.DBNull.Value) ? null : (DateTime?)dr["LastLoginDate"],
-                                CurrentStatus = (dr["AccountStatus"] == System.DBNull.Value) ? null : (string)dr["AccountStatus"],
+                                CurrentStatus = (string)dr["AccountStatus"],
+                                OnlineStatus = (string)dr["OnlineStatus"]
                             };
 
                             objList.Add(obj);
-						}
-						dr.NextResult();
-						while (dr.Read()) {
-							TotalPages = (int)dr["PageCount"];
-						}
-					}
-					return new UsersPage(objList, PageNo, PageSize, TotalPages, filterQ);
-					}
-				finally {
-					CloseConnection();
-				}
-			}
+                        }
+                        dr.NextResult();
+                        while (dr.Read())
+                        {
+                            TotalPages = (int)dr["PageCount"];
+                        }
+                    }
+                    return new UsersPage(objList, PageNo, PageSize, TotalPages, filterQ);
+                }
+                finally
+                {
+                    CloseConnection();
+                }
+            }
 
-		}
+        }
 
         public void SetLogedIn(bool status, ApplicationUser usr)
         {
@@ -86,22 +91,50 @@ namespace Freshly.Identity {
             {
                 if (usr != null)
                 {
-                    usr.IsLogedIn = status;
-                    usr.LastLoginDate = DateTime.UtcNow;
-                    Update(usr);
+                    SetLogedIn(status, usr.UserId);
                 }
             }
             catch (Exception ex) { }
         }
 
-        public void SetLogedIn(bool status, string usrName)
+        public int SetLogedIn(bool status, string usrName)
         {
-            try { SetLogedIn(status, GetUserByID(usrName)); }
-            catch (Exception ex) { }
+            var sqlText = $"Update dbo.[ApplicationUsers] Set [IsLogedIn] = @IsLogedIn, {(status == true ? "[LastLoginDate] = @LastLoginDate, " : "")}[LastActivityDate] = GetDate() Where ([UserId] = @UserId)";
+            var sqlParams = new List<SqlParameter>
+            {
+                DataHelper.CreateParameter("@UserId", SqlDbType.NVarChar, 128, usrName),
+                DataHelper.CreateParameter("@IsLogedIn", SqlDbType.Bit, 1, status),
+            };
+            if (status) sqlParams.Add(DataHelper.CreateParameter("@LastLoginDate", SqlDbType.DateTime, 8, DateTime.UtcNow));
+            return ExecuteCommand(sqlText, sqlParams);
+        }
+
+        public bool SetOnlineStatus(string usrName, string status)
+        {
+            var sqlText = "Update dbo.[ApplicationUsers] Set [OnlineStatus] = @OnlineStatus, [LastActivityDate] = GetDate() Where ([UserId] = @UserId)";
+            var sqlParams = new List<SqlParameter>
+            {
+                DataHelper.CreateParameter("@UserId", SqlDbType.NVarChar, 128, usrName),
+                DataHelper.CreateParameter("@OnlineStatus", SqlDbType.NVarChar, 16, status),
+            };
+            var i = ExecuteCommand(sqlText, sqlParams);
+            return i == 0 ? false : true;
+        }
+
+        internal bool ChangeStatus(string userId, string status)
+        {
+            var sqlText = $"Update dbo.[ApplicationUsers] Set [AccountStatus] = @AccountStatus{(status == Status.Locked.ToString() ? ", [LastLockDate] = GetDate()" : "")} Where ([UserId] = @UserId)";
+            var sqlParams = new List<SqlParameter>
+            {
+                DataHelper.CreateParameter("@UserId", SqlDbType.NVarChar, 128, userId),
+                DataHelper.CreateParameter("@AccountStatus", SqlDbType.NVarChar, 16, status),
+            };
+            var i = ExecuteCommand(sqlText, sqlParams);
+            return i == 0 ? false : true;
         }
 
         private ApplicationUser GetRecordByID(string varSql, List<SqlParameter> sqlParams) {
-			using (SqlCommand cmd = new SqlCommand($"Select [UserId], [FirstName], [LastName], [DateOfBirth], [Gender], [Email], [PhoneNumber], [Password], [IsLogedIn], [LastLoginDate], [AccountStatus], [LastLockDate], [LastActivityDate], [RegDate] From dbo.[ApplicationUsers] Where {varSql}", Conn)) {
+			using (SqlCommand cmd = new SqlCommand($"Select [UserId], [FirstName], [LastName], [DateOfBirth], [Gender], [Email], [PhoneNumber], [Password], [IsLogedIn], [LastLoginDate], [AccountStatus], [OnlineStatus], [LastLockDate], [LastActivityDate], [RegDate] From dbo.[ApplicationUsers] Where {varSql}", Conn)) {
 				cmd.CommandTimeout = ComTimeout;
 				cmd.Parameters.AddRange(sqlParams.ToArray());
 
@@ -119,10 +152,11 @@ namespace Freshly.Identity {
                                 Gender = (string)dr["Gender"],
                                 Email = (string)dr["Email"],
                                 PhoneNumber = (dr["PhoneNumber"] == System.DBNull.Value) ? null : (string)dr["PhoneNumber"],
-                                Password = (dr["Password"] == System.DBNull.Value) ? null : (string)dr["Password"],
+                                Password = (string)dr["Password"],
                                 IsLogedIn = (bool)dr["IsLogedIn"],
                                 LastLoginDate = (dr["LastLoginDate"] == System.DBNull.Value) ? null : (DateTime?)dr["LastLoginDate"],
-                                CurrentStatus = (dr["AccountStatus"] == System.DBNull.Value) ? null : (string)dr["AccountStatus"],
+                                CurrentStatus = (string)dr["AccountStatus"],
+                                OnlineStatus = (string)dr["OnlineStatus"],
                                 LastLockDate = (dr["LastLockDate"] == System.DBNull.Value) ? null : (DateTime?)dr["LastLockDate"],
                                 LastActivityDate = (DateTime)dr["LastActivityDate"],
                                 RegDate = (DateTime)dr["RegDate"]
@@ -135,14 +169,14 @@ namespace Freshly.Identity {
                             dr.NextResult();
                             while (dr.Read())
                             {
-                                if (countr == 0) obj.Groups += dr["GroupName"].ToString();
-                                else obj.Groups += $",{dr["GroupName"].ToString()}";
+                                if (countr == 0) obj.Groups = (string)dr["GroupName"];
+                                else obj.Groups += $",{(string)dr["GroupName"]}";
                                 countr++;
                             }
                         }
 					}
 					return obj;
-					}
+				}
 				finally {
 					CloseConnection();
 				}
@@ -162,7 +196,7 @@ namespace Freshly.Identity {
         
         public ApplicationUser GetUser(string varUserId)
         {
-            string sql = "([UserId] = @UserId OR [Email] = @Email OR [PhoneNumber] = @PhoneNumber);";
+            string sql = "([UserId] = @UserId OR [Email] = @Email OR [PhoneNumber] = @PhoneNumber); Select A.GroupName From dbo.UserGroups A Inner Join dbo.ApplicationUsers B On A.UserId = B.UserId Where A.[UserId] = @UserId OR B.[Email] = @Email OR B.[PhoneNumber] = @PhoneNumber;";
             var lst = new List<SqlParameter>()
             {
                 DataHelper.CreateParameter("@UserId", SqlDbType.NVarChar, 128, varUserId),
@@ -203,7 +237,7 @@ namespace Freshly.Identity {
         }
 
         public int Update(ApplicationUser obj) {
-			var sqlText = "Update dbo.[ApplicationUsers] Set [FirstName] = @FirstName, [LastName] = @LastName, [DateOfBirth] = @DateOfBirth, [Gender] = @Gender, [Email] = @Email, [PhoneNumber] = @PhoneNumber, [Password] = @Password, [IsLogedIn] = @IsLogedIn, [LastLoginDate] = @LastLoginDate, [AccountStatus] = @AccountStatus, [LastLockDate] = @LastLockDate, [LastActivityDate] = GetDate() Where ([UserId] = @UserId)";
+			var sqlText = "Update dbo.[ApplicationUsers] Set [FirstName] = @FirstName, [LastName] = @LastName, [DateOfBirth] = @DateOfBirth, [Gender] = @Gender, [Email] = @Email, [PhoneNumber] = @PhoneNumber, [Password] = @Password, [IsLogedIn] = @IsLogedIn, [LastLoginDate] = @LastLoginDate, [AccountStatus] = @AccountStatus, [OnlineStatus] = @OnlineStatus, [LastLockDate] = @LastLockDate, [LastActivityDate] = GetDate() Where ([UserId] = @UserId)";
             var sqlParams = new List<SqlParameter>
             {
                 DataHelper.CreateParameter("@UserId", SqlDbType.NVarChar, 128, obj.UserId),
@@ -216,7 +250,8 @@ namespace Freshly.Identity {
                 DataHelper.CreateParameter("@Password", SqlDbType.NVarChar, -1, obj.Password, true),
                 DataHelper.CreateParameter("@IsLogedIn", SqlDbType.Bit, 1, obj.IsLogedIn),
                 DataHelper.CreateParameter("@LastLoginDate", SqlDbType.DateTime, 8, obj.LastLoginDate, true),
-                DataHelper.CreateParameter("@AccountStatus", SqlDbType.NVarChar, 256, obj.CurrentStatus, true),
+                DataHelper.CreateParameter("@AccountStatus", SqlDbType.NVarChar, 256, obj.CurrentStatus),
+                DataHelper.CreateParameter("@OnlineStatus", SqlDbType.NVarChar, 16, obj.OnlineStatus),
                 DataHelper.CreateParameter("@LastLockDate", SqlDbType.DateTime, 8, obj.LastLockDate, true)
             };
             return ExecuteCommand(sqlText, sqlParams);
