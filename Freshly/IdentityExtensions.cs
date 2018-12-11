@@ -37,7 +37,7 @@ namespace Freshly.Identity
         {
             if (user.Identity.IsAuthenticated)
             {
-                var fn = user.Claims.First(s => s.Type == "FirstName");
+                var fn = user.Claims.First(s => s.Type.ToLower().Contains("given_name"));
                 return fn?.Value;
             }
             return "";
@@ -47,7 +47,7 @@ namespace Freshly.Identity
         {
             if (user.Identity.IsAuthenticated)
             {
-                var ln = user.Claims.First(s => s.Type == "LastName");
+                var ln = user.Claims.First(s => s.Type.ToLower().Contains("family_name"));
                 return ln?.Value;
             }
             return "";
@@ -57,8 +57,8 @@ namespace Freshly.Identity
         {
             if (user.Identity.IsAuthenticated)
             {
-                var fn = user.Claims.FirstOrDefault(s => s.Type == "FirstName");
-                var ln = user.Claims.FirstOrDefault(s => s.Type == "LastName");
+                var fn = user.Claims.FirstOrDefault(s => s.Type.ToLower().Contains("given_name"));
+                var ln = user.Claims.FirstOrDefault(s => s.Type.ToLower().Contains("family_name"));
                 return $"{fn?.Value} {ln?.Value}";
             }
             return "";
@@ -67,7 +67,7 @@ namespace Freshly.Identity
         public static string GetGender(this ClaimsPrincipal user)
         {
             if (user.Identity.IsAuthenticated) {
-                var fn = user.Claims.First(s => s.Type == "Gender");
+                var fn = user.Claims.First(s => s.Type.ToLower().Contains("gender"));
                 return fn?.Value;
             }
             return "";
@@ -76,7 +76,7 @@ namespace Freshly.Identity
         public static string GetEmail(this ClaimsPrincipal user)
         {
             if (user.Identity.IsAuthenticated) {
-                var fn = user.Claims.First(s => s.Type == "Email");
+                var fn = user.Claims.First(s => s.Type.ToLower().Contains("emailaddress"));
                 return fn?.Value;
             }
             return "";

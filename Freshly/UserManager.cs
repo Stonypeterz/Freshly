@@ -148,9 +148,9 @@ namespace Freshly.Identity
                         new Claim(ClaimTypes.Role, usr.Groups),
                         new Claim(ClaimTypes.Email, usr.Email),
                         new Claim(ClaimTypes.MobilePhone, usr.PhoneNumber),
-                        new Claim("FirstName", usr.FirstName),
-                        new Claim("LastName", usr.LastName),
-                        new Claim("Gender", usr.Gender)
+                        new Claim("given_name", usr.FirstName),
+                        new Claim("family_name", usr.LastName),
+                        new Claim("gender", usr.Gender)
                     };
 
                     if (!string.IsNullOrEmpty(usr.Groups))
@@ -200,11 +200,11 @@ namespace Freshly.Identity
                         new Claim(JwtRegisteredClaimNames.NameId, user.UserId),
                         new Claim(JwtRegisteredClaimNames.Sub, user.UserId),
                         new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                        //new Claim(ClaimTypes.MobilePhone, user.PhoneNumber),
-                        //new Claim(ClaimTypes.Email, user.Email),
-                        //new Claim(JwtRegisteredClaimNames.GivenName, user.FirstName),
-                        //new Claim(JwtRegisteredClaimNames.FamilyName, user.LastName),
-                        //new Claim(JwtRegisteredClaimNames.Gender, user.Gender)
+                        new Claim(ClaimTypes.MobilePhone, user.PhoneNumber),
+                        new Claim(ClaimTypes.Email, user.Email),
+                        new Claim(JwtRegisteredClaimNames.GivenName, user.FirstName),
+                        new Claim(JwtRegisteredClaimNames.FamilyName, user.LastName),
+                        new Claim(JwtRegisteredClaimNames.Gender, user.Gender)
                     };
 
                     var tvp = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(seckey));
