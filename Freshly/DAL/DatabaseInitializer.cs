@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using static System.Net.Mime.MediaTypeNames;
 
@@ -35,7 +36,7 @@ namespace Freshly.Identity
                     OpenConnection();
                 }
                 //Create all the tables
-                var tbls = SqlQuery.Split("GO");
+                var tbls = Regex.Split(SqlQuery, @"^\s*GO\s*$", RegexOptions.Multiline | RegexOptions.IgnoreCase);//SqlQuery.Split("GO");
                 Conn = new SqlConnection(Freshly.D.ConnectionString);
                 using (var cmd = new SqlCommand(sql, Conn))
                 {

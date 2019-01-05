@@ -4,8 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Data;
 using System.Data.SqlClient;
-using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using Freshly.Identity.Models;
 
