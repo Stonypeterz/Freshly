@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.1</TargetFramework>
+    <TargetFramework>netstandard2.0</TargetFramework>
     <Authors>Stephen O. Eze</Authors>
     <Company>Stonypeterz Technology Ltd.</Company>
     <Product>Freshly</Product>
@@ -10,7 +10,7 @@
     <RepositoryUrl>https://www.github.com/stonypeterz/freshly</RepositoryUrl>
     <PackageIconUrl>https://www.stonypeterz.com/Logo48x48.ico</PackageIconUrl>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>1.0.5.4</Version>
+    <Version>1.0.6</Version>
     <Copyright />
   </PropertyGroup>
 

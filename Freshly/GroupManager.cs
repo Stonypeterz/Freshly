@@ -10,6 +10,7 @@ namespace Freshly.Identity
     {
         private ApplicationGroupsFactory AGF { get; set; }
         private GroupPoliciesFactory GPF { get; set; }
+        private ApplicationPoliciesFactory APF { get; set; }
 
         public GroupManager()
         {
@@ -78,16 +79,23 @@ namespace Freshly.Identity
             return Task.CompletedTask;
         }
 
-        public Task GetGroupPolicyRightsAsync(string groupName)
+        public Task<List<string>> GetGroupPolicyRightsAsync(string groupName)
         {
             var gps = GPF.GetGroupPolicies(groupName);
             return Task.FromResult(gps);
+        }
+
+        public Task<List<string>> GetAllPoliciesAsync()
+        {
+            var aps = APF.GetApplicationPolicies();
+            return Task.FromResult(aps);
         }
 
         public void Dispose()
         {
             AGF.Dispose();
             GPF.Dispose();
+            APF.Dispose();
         }
     }
 }
