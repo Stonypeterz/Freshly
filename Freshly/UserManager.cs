@@ -301,10 +301,39 @@ namespace Freshly.Identity
         public Task<bool> AddUserToGroupsAsync(string UserId, string[] GroupNames)
         {
             using (var ug = new UserGroupsFactory()) {
-                ug.ClearGroups(UserId);
                 foreach (var item in GroupNames) {
                     ug.AddUserToGroup(UserId, item);
                 }
+            };
+            return Task.FromResult(true);
+        }
+
+        public Task<bool> RemoveUserFromGroupAsync(string UserId, string GroupName)
+        {
+            using (var ug = new UserGroupsFactory())
+            {
+                ug.RemoveUserFromGroup(UserId, GroupName);
+            };
+            return Task.FromResult(true);
+        }
+
+        public Task<bool> RemoveUserFromGroupsAsync(string UserId, string[] GroupNames)
+        {
+            using (var ug = new UserGroupsFactory())
+            {
+                foreach (var item in GroupNames)
+                {
+                    ug.RemoveUserFromGroup(UserId, item);
+                }
+            };
+            return Task.FromResult(true);
+        }
+
+        public Task<bool> RemoveUserFromAllGroupsAsync(string UserId, string[] GroupNames)
+        {
+            using (var ug = new UserGroupsFactory())
+            {
+                ug.ClearGroups(UserId);
             };
             return Task.FromResult(true);
         }

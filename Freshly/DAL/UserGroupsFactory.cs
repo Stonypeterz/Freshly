@@ -94,6 +94,17 @@ namespace Freshly.Identity {
             };
             return ExecuteCommand(sqlText, sqlParams) > 0;
         }
+
+        internal bool RemoveUserFromGroup(string userId, string groupName)
+        {
+            var sqlText = "Delete From dbo.[UserGroups] Where ([UserId] = @UserId And [GroupName] = @GroupName)";
+            var sqlParams = new List<SqlParameter>
+            {
+                DataHelper.CreateParameter("@UserId", SqlDbType.NVarChar, 128, userId),
+                DataHelper.CreateParameter("@GroupName", SqlDbType.NVarChar, 128, groupName)
+            };
+            return ExecuteCommand(sqlText, sqlParams) > 0;
+        }
     }
 
 	public class UserGroup {

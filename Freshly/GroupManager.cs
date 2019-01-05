@@ -44,6 +44,7 @@ namespace Freshly.Identity
             return Task.CompletedTask;
         }
 
+        [Obsolete("GrantAccessAsync was a bad naming choice and has been changed. It will be removed in the next version. Please use GrantPolicyRightToGroupAsync", false)]
         public Task GrantAccessAsync(string groupName, string accessPolicy)
         {
             if (string.IsNullOrEmpty(groupName)) throw new ArgumentNullException(nameof(groupName));
@@ -52,12 +53,35 @@ namespace Freshly.Identity
             return Task.CompletedTask;
         }
 
+        public Task GrantPolicyRightToGroupAsync(string groupName, string accessPolicy)
+        {
+            if (string.IsNullOrEmpty(groupName)) throw new ArgumentNullException(nameof(groupName));
+            if (string.IsNullOrEmpty(accessPolicy)) throw new ArgumentNullException(nameof(accessPolicy));
+            GPF.AddGroupPolicy(groupName, accessPolicy);
+            return Task.CompletedTask;
+        }
+
+        [Obsolete("DenyAccessAsync was a bad naming choice and has been changed. It will be removed in the next version. Please use DenyPolicyRightToGroupAsync", false)]
         public Task DenyAccessAsync(string groupName, string accessPolicy)
         {
             if (string.IsNullOrEmpty(groupName)) throw new ArgumentNullException(nameof(groupName));
             if (string.IsNullOrEmpty(accessPolicy)) throw new ArgumentNullException(nameof(accessPolicy));
             GPF.DeleteGroupRule(groupName, accessPolicy);
             return Task.CompletedTask;
+        }
+
+        public Task DenyPolicyRightToGroupAsync(string groupName, string accessPolicy)
+        {
+            if (string.IsNullOrEmpty(groupName)) throw new ArgumentNullException(nameof(groupName));
+            if (string.IsNullOrEmpty(accessPolicy)) throw new ArgumentNullException(nameof(accessPolicy));
+            GPF.DeleteGroupRule(groupName, accessPolicy);
+            return Task.CompletedTask;
+        }
+
+        public Task GetGroupPolicyRightsAsync(string groupName)
+        {
+            var gps = GPF.GetGroupPolicies(groupName);
+            return Task.FromResult(gps);
         }
 
         public void Dispose()
