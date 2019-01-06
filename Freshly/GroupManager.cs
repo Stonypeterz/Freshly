@@ -16,6 +16,7 @@ namespace Freshly.Identity
         {
             AGF = new ApplicationGroupsFactory();
             GPF = new GroupPoliciesFactory();
+            APF = new ApplicationPoliciesFactory();
         }
 
         public Task AddGroupAsync(string groupName)
@@ -87,7 +88,7 @@ namespace Freshly.Identity
 
         public Task<List<string>> GetAllPoliciesAsync()
         {
-            var aps = APF.GetApplicationPolicies();
+            var aps = Freshly.D.Policies; //APF.GetApplicationPolicies();
             return Task.FromResult(aps);
         }
 

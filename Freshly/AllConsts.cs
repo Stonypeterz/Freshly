@@ -9,6 +9,9 @@ namespace Freshly.Identity
     internal static class AllConsts
     {
         public const string AuthenticationType = "Freshly";
+        /// <summary>
+        /// Reset Password Repo
+        /// </summary>
         internal static List<CodeModel> RPR = new List<CodeModel>();
         /// <summary>
         /// Failed Password Attempts
