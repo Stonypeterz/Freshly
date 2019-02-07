@@ -15,14 +15,16 @@ namespace Freshly.Identity.Models
         Success,
         WrongPassword,
         InvalidCodeOrId,
-        Denied
+        Denied,
+        Suspended
     }
 
-    internal static class AccountStatus
+    public static class AccountStatus
     {
-        public const string Active = "Active";
         public const string Pending = "Pending";
+        public const string Active = "Active";
         public const string Locked = "Locked";
+        public const string Suspended = "Suspended";
     }
 
     public class ResultStatus

@@ -153,9 +153,6 @@ namespace Freshly.Identity
                         new Claim("gender", usr.Gender)
                     };
 
-                    if (!string.IsNullOrEmpty(usr.Groups))
-                        claims.Add(new Claim(ClaimTypes.Role, usr.Groups));
-
                     var identity = new ClaimsIdentity(AllConsts.AuthenticationType);
                     identity.AddClaims(claims);
                     var principle = new ClaimsPrincipal(identity);
@@ -246,9 +243,9 @@ namespace Freshly.Identity
         /// <param name="UserId">The User Account Identifier (Username, Email or Phone number)</param>
         /// <param name="status">The Status you want to change to</param>
         /// <returns></returns>
-        public Task<bool> ChangeStatusAsync(string UserId, Status status)
+        public Task<bool> ChangeStatusAsync(string UserId, string status)
         {
-            bool f = DF.ChangeStatus(UserId, status.ToString());
+            bool f = DF.ChangeStatus(UserId, status);
             return Task.FromResult(f);
         }
 
@@ -329,7 +326,7 @@ namespace Freshly.Identity
             return Task.FromResult(true);
         }
 
-        public Task<bool> RemoveUserFromAllGroupsAsync(string UserId, string[] GroupNames)
+        public Task<bool> RemoveUserFromAllGroupsAsync(string UserId)
         {
             using (var ug = new UserGroupsFactory())
             {

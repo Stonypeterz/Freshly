@@ -8,8 +8,8 @@ namespace Freshly.Identity
 {
     public static class CustomExtensions
     {
-        private static string eKey = "J85a/gPN5mWh/jMQJPK!EWiMN5B@zWLU4TZn0fUSzJPRaw";
-        private static byte[] bt = new byte[16] { 0x99, 0xf6, 0x68, 0x6e, 0x50, 0xfd, 0x69, 0x64, 0x7a, 0x55, 0x64, 0x69, 0x77, 0xbd, 0xe6, 0xa9 };
+        private static readonly string eKey = "J85a/gPN5mWh/jMQJPK!EWiMN5B@zWLU4TZn0fUSzJPRaw";
+        private static readonly byte[] bt = new byte[16] { 0x99, 0xf6, 0x68, 0x6e, 0x50, 0xfd, 0x69, 0x64, 0x7a, 0x55, 0x64, 0x69, 0x77, 0xbd, 0xe6, 0xa9 };
 
         public static string ToHashed(this string data)
         {

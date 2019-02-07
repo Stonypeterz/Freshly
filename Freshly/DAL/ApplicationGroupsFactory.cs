@@ -16,9 +16,11 @@ namespace Freshly.Identity {
 
 		public bool AddGroup(string varGroupName) {
 			var sqlText = "If((Select A.GroupName From dbo.[ApplicationGroups] A Where A.GroupName = @GroupName) IS NULL) Insert Into dbo.[ApplicationGroups] ([GroupName]) Values (@GroupName)";
-			var sqlParams = new List<SqlParameter>();
-			sqlParams.Add(DataHelper.CreateParameter("@GroupName", SqlDbType.NVarChar, 128, varGroupName));
-			return ExecuteCommand(sqlText, sqlParams) > 0;
+            var sqlParams = new List<SqlParameter>
+            {
+                DataHelper.CreateParameter("@GroupName", SqlDbType.NVarChar, 128, varGroupName)
+            };
+            return ExecuteCommand(sqlText, sqlParams) > 0;
 		}
         
 		public List<string> GetRecord() {

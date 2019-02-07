@@ -85,14 +85,10 @@ namespace Freshly.Identity {
 
         public void SetLogedIn(bool status, ApplicationUser usr)
         {
-            try
+            if (usr != null)
             {
-                if (usr != null)
-                {
-                    SetLogedIn(status, usr.UserId);
-                }
+                SetLogedIn(status, usr.UserId);
             }
-            catch (Exception ex) { }
         }
 
         public int SetLogedIn(bool status, string usrName)
@@ -206,7 +202,7 @@ namespace Freshly.Identity {
 
         public UserAssignedGroups GetGroups(string UserId)
         {
-            using (SqlCommand cmd = new SqlCommand("Select UserId, FirstName, LastName From dbo.ApplicationUsers Where UserId = @UserId; Select A.GroupName, Case When (Select B.GroupName From dbo.UserGroups B Where A.GroupName = B.GroupName And B.UserId = @UserId) = null Then 'false' Else 'true' End As IsAssigned From dbo.ApplicationGroups A;", Conn)) {
+            using (SqlCommand cmd = new SqlCommand("Select UserId, FirstName, LastName From dbo.ApplicationUsers Where UserId = @UserId; Select A.GroupName, Case When B.UserId IS NULL Then 'false' Else 'true' End As IsAssigned From dbo.ApplicationGroups A Left Outer Join dbo.UserGroups B On A.GroupName = B.GroupName And B.UserId = @UserId;", Conn)) {
                 cmd.CommandTimeout = ComTimeout;
                 cmd.Parameters.AddWithValue("@UserId", UserId);
                 var ug = new UserAssignedGroups();

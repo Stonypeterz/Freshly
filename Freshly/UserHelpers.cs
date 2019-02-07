@@ -42,6 +42,7 @@ namespace Freshly.Identity
             if (usr == null) lgnr = Status.InvalidAccountId;
             else if (usr.CurrentStatus == AccountStatus.Pending) lgnr = Status.Pending;
             else if (usr.CurrentStatus == AccountStatus.Active) lgnr = Status.Success;
+            else if (usr.CurrentStatus == AccountStatus.Suspended) lgnr = Status.Suspended;
             else if (usr.CurrentStatus == AccountStatus.Locked) {
                 var lkd = AllConsts.FPA.Find(f => f.UserId == usr.UserId);
                 if(lkd == null || lkd?.DateLocked.AddMinutes(Freshly.D.LockedWindow) < DateTime.UtcNow)

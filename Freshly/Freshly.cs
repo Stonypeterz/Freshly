@@ -61,54 +61,132 @@ namespace Freshly.Identity
             return builder;
         }
 
-        public static IServiceCollection AddFreshly(this IServiceCollection services, Action<FreshlyOptions> defaults)
+        public static IServiceCollection AddFreshly(this IServiceCollection services, AuthScheme scheme, Action<FreshlyOptions> defaults)
         {
             defaults?.Invoke(D);
             SetDefaults(D);
 
-            return services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>()
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>()
                 .AddTransient<IAuthorizationHandler, AccessRuleHandler>()
                 .AddTransient<UserManager>()
-                .AddTransient<GroupManager>()
-                .AddAuthorization(options =>
+                .AddTransient<GroupManager>();
+                
+            if(scheme == AuthScheme.Cookie)
+            {
+                services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+                    .AddCookie(option =>
+                    {
+                        option.LoginPath = new PathString("/account/login");
+                        option.AccessDeniedPath = new PathString("/error/accessdenied");
+                        option.SlidingExpiration = true;
+                        option.ExpireTimeSpan = TimeSpan.FromMinutes(15);
+                        option.Cookie = new CookieBuilder()
+                        {
+                            Domain = D.CookieDomain
+                        };
+                        option.Events.OnValidatePrincipal = CookieEvents.ValidateAsync;
+                    });
+                services.AddAuthorization(options =>
                 {
                     if (D.Policies.Count > 0)
                     {
                         foreach (var ar in D.Policies)
                         {
                             options.AddPolicy(ar, policy => {
+                                policy.RequireAuthenticatedUser();
                                 policy.Requirements.Add(new AccessRuleRequirement(ar));
-                                //policy.AddAuthenticationSchemes(CookieAuthenticationDefaults.AuthenticationScheme, JwtBearerDefaults.AuthenticationScheme);
+                                //policy.AddAuthenticationSchemes(CookieAuthenticationDefaults.AuthenticationScheme);
                             });
                         }
                     }
-                })
-                .AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-                .AddCookie(option =>
-                {
-                    option.LoginPath = new PathString("/account/login");
-                    option.AccessDeniedPath = new PathString("/error/accessdenied");
-                    option.SlidingExpiration = true;
-                    option.ExpireTimeSpan = TimeSpan.FromMinutes(15);
-                    option.Cookie = new CookieBuilder()
+                });
+            }
+            else if (scheme == AuthScheme.JwtBearer)
+            {
+                services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                    .AddJwtBearer(option =>
                     {
-                        Domain = D.CookieDomain
-                    };
-                    option.Events.OnValidatePrincipal = CookieEvents.ValidateAsync;
-                })
-                .AddJwtBearer(option =>
+                        option.RequireHttpsMetadata = true;
+                        option.SaveToken = true;
+                        option.TokenValidationParameters = new TokenValidationParameters()
+                        {
+                            ValidateIssuerSigningKey = true,
+                            ValidIssuer = D.TokenIssuer,
+                            ValidAudience = D.TokenAudience,
+                            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(D.TokenKey))
+                        };
+                    });
+                services.AddAuthorization(options =>
                 {
-                    option.RequireHttpsMetadata = true;
-                    option.SaveToken = true;
-                    option.TokenValidationParameters = new TokenValidationParameters()
+                    if (D.Policies.Count > 0)
                     {
-                        ValidateIssuerSigningKey = true,
-                        ValidIssuer = D.TokenIssuer,
-                        ValidAudience = D.TokenAudience,
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(D.TokenKey))
-                    };
-                })
-                .Services;
+                        foreach (var ar in D.Policies)
+                        {
+                            options.AddPolicy(ar, policy => {
+                                policy.RequireAuthenticatedUser();
+                                policy.Requirements.Add(new AccessRuleRequirement(ar));
+                                //policy.AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme);
+                            });
+                        }
+                    }
+                });
+            }
+            else if (scheme == AuthScheme.Both)
+            {
+                services.AddAuthentication()//CookieAuthenticationDefaults.AuthenticationScheme)
+                    .AddCookie(option =>
+                    {
+                        option.LoginPath = new PathString("/account/login");
+                        option.AccessDeniedPath = new PathString("/error/accessdenied");
+                        option.SlidingExpiration = true;
+                        option.ExpireTimeSpan = TimeSpan.FromMinutes(15);
+                        option.Cookie = new CookieBuilder()
+                        {
+                            HttpOnly = true,
+                            Domain = D.CookieDomain
+                        };
+                        option.Events.OnValidatePrincipal = CookieEvents.ValidateAsync;
+                    })
+                    .AddJwtBearer(option =>
+                    {
+                        option.RequireHttpsMetadata = true;
+                        option.SaveToken = true;
+                        option.TokenValidationParameters = new TokenValidationParameters()
+                        {
+                            ValidateIssuerSigningKey = true,
+                            ValidIssuer = D.TokenIssuer,
+                            ValidAudience = D.TokenAudience,
+                            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(D.TokenKey))
+                        };
+                    });
+                services.AddAuthorization(options =>
+                {
+                    //var defaultAuthorizationPolicyBuilder = new AuthorizationPolicyBuilder(
+                    //CookieAuthenticationDefaults.AuthenticationScheme,
+                    //JwtBearerDefaults.AuthenticationScheme);
+                    //defaultAuthorizationPolicyBuilder = defaultAuthorizationPolicyBuilder.RequireAuthenticatedUser();
+                    //options.DefaultPolicy = defaultAuthorizationPolicyBuilder.Build();
+
+                    if (D.Policies.Count > 0)
+                    {
+                        foreach (var ar in D.Policies)
+                        {
+                            options.AddPolicy(ar, policy => {
+                                policy.RequireAuthenticatedUser();
+                                policy.Requirements.Add(new AccessRuleRequirement(ar));
+                                policy.AddAuthenticationSchemes(CookieAuthenticationDefaults.AuthenticationScheme, JwtBearerDefaults.AuthenticationScheme);
+                            });
+                        }
+                    }
+                });
+            }
+
+            return services;
+        }
+
+        public static IServiceCollection AddFreshly(this IServiceCollection services, Action<FreshlyOptions> defaults)
+        {
+            return services.AddFreshly(AuthScheme.Both, defaults);
         }
 
         internal static void SetDefaults(FreshlyOptions D)
@@ -164,4 +242,10 @@ namespace Freshly.Identity
 
     }
     
+    public enum AuthScheme
+    {
+        Cookie,
+        JwtBearer,
+        Both
+    }
 }

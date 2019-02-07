@@ -6,7 +6,7 @@ namespace Freshly.Identity
 {
     public static class IdentityExtensions {
 
-        public static bool AdheresTo(this ClaimsPrincipal usr, string accessPolicy)
+        public static bool HasRightTo(this ClaimsPrincipal usr, string accessPolicy)
         {
             if (!usr.Identity.IsAuthenticated) return false;
             return Freshly.CheckAccess(usr.Identity.Name, accessPolicy);
